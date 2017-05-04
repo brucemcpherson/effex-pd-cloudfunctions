@@ -184,7 +184,7 @@ var MakePoint = (function(ns) {
 var Exchange = (function(ns) {
 
   // open efx
-  ns.handle = require('../../effex-api-client/dist/index');
+  ns.handle = require('effex-api-client');
   ns.settings = {
     instance: 'dev'
   };
