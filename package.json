@@ -1,7 +1,7 @@
 {
-  "name": "effex-pd-cloudfunctions",
+  "name": "pdordergenerator",
   "version": "1.0",
-  "description": "Node cloud functions for ephemeeral exchange",
+  "description": "google cloud function random order generator for ephemeral exchange demo",
   "main": "index.js",
   "author": "Bruce Mcpherson <bruce@mcpher.com> (http://ramblings.mcpher.com)",
   "license": "MIT",
