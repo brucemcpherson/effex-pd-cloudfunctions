@@ -1,0 +1,27 @@
+{
+  "name": "effex-pd-cloudfunctions",
+  "version": "1.0",
+  "description": "Node cloud functions for ephemeeral exchange",
+  "main": "index.js",
+  "author": "Bruce Mcpherson <bruce@mcpher.com> (http://ramblings.mcpher.com)",
+  "license": "MIT",
+  "keywords": [
+    "api",
+    "ephemeral exchange",
+    "cache",
+    "effex",
+    "google maps",
+    "google cloud functions"
+  ],
+  "dependencies": {
+    "@google/maps": "^0.3.1",
+    "axios": "^0.15.3",
+    "effex-api-client": "^1.1.1",
+    "point-in-polygon": "^1.0.1",
+    "socket.io-client": "^1.7.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brucemcpherson/effex-pd-cloudfunctions"
+  }
+}
