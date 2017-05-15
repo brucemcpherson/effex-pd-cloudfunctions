@@ -15,8 +15,9 @@ exports.pdordergenerator = function(req, res) {
 
     // now read the given item, with an intention to update, and also activate exp backoff 
     efx.read(keys.item, keys.updater, {
-        "intention": "update"
-      },true)
+        "intention": "update",
+        "backoff":true
+      })
       .then(function(result) {
         // kick off making a new point
         if (!result.data.ok) throw result.data;
