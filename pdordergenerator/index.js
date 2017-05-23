@@ -5,15 +5,14 @@ exports.pdordergenerator = function(req, res) {
     res.status(400).send('No message defined!');
   }
   else {
-console.log('in');
+
     // initialize the thing
     var efx = Exchange.init(req.body.contents).handle;
-console.log ('efx init');
-efx.ping().then (function(d) { console.log (d.data);});
+
     // and set the session to this app name for future info
     efx.setSession("pd-order-generator");
     var keys = efx.getKeys();
-console.log ('keys',keys);
+
     // now read the given item, with an intention to update, and also activate exp backoff 
     efx.read(keys.item, keys.updater, {
         "intention": "update",
