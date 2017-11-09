@@ -1,4 +1,3 @@
-
 exports.pdordergenerator = function(req, res) {
   if (req.body.contents === undefined) {
     // This is an error case, as "message" is required
@@ -8,28 +7,31 @@ exports.pdordergenerator = function(req, res) {
 
     // initialize the thing
     var efx = Exchange.init(req.body.contents).handle;
-
+   
     // and set the session to this app name for future info
     efx.setSession("pd-order-generator");
     var keys = efx.getKeys();
-
+    
     // now read the given item, with an intention to update, and also activate exp backoff 
-    efx.read(keys.item, keys.updater, {
+    return efx.read(keys.item, keys.updater, {
         "intention": "update",
-        "backoff":true
+        "backoff": true
       })
+      
       .then(function(result) {
+        
         // kick off making a new point
-        if (!result.data.ok) throw result.data;
-        MakePoint.init(result.data.value, keys);
-        return Promise.all([MakePoint.getPoint(), Promise.resolve(result.data)]);
+        if (result.data.ok) {
+          MakePoint.init(result.data.value, keys);
+        }
+        return Promise.all([result.data.ok ? MakePoint.getPoint() : null, result.data]);
       })
       .then(function(result) {
         // take the first resukts
         var data = result[1];
         var item = result[0];
-        
-        if (item) {
+
+        if (item && data.ok) {
           // all that happens is that no random order is created if cant get a point
           data.value.points.push(item);
 
@@ -44,13 +46,20 @@ exports.pdordergenerator = function(req, res) {
           };
         }
       })
+      
       .then(function(result) {
-        if (!result.data.ok) throw result.data;
-        res.status(200).end();
+        //res.send(result);
+        ///if (!result.data.ok) throw result.data;
+        var r = result && result.data && result.data;
+        if (r && r.ok) {
+          res.status(200).end();
+        }
+        else {
+          res.status (r ? r.code : 500).send(r? r.error : "failed writing").end();
+        }
       })
       .catch(function(err) {
-        console.log('err', err);
-        res.status(500).end();
+        res.status(500).send(err.toString()).end();
       });
 
 
@@ -129,7 +138,7 @@ var MakePoint = (function(ns) {
       .then(function(places) {
         // i've only taken the first default page
         // if there's nothing there then just pass on this one
-       
+
         // pick the first one still in the zone
         if (places.json.status === "OK") {
 
@@ -142,8 +151,8 @@ var MakePoint = (function(ns) {
                 "place_id": c.place_id,
                 "vicinity": c.vicinity,
                 "photos": c.photos,
-                "lat":c.geometry.location.lat,
-                "lng":c.geometry.location.lng
+                "lat": c.geometry.location.lat,
+                "lng": c.geometry.location.lng
               };
             }
             return p;
@@ -185,17 +194,18 @@ var MakePoint = (function(ns) {
 var Exchange = (function(ns) {
 
   // open efx
-  ns.handle = require('effex-api-client');
+  //ns.handle = require('/home/ubuntu/workspace/effex-api-client/dist/index');
+  ns.handle = require ('effex-api-client');
   ns.settings = {
-    instance: 'prod'
+    instance: 'fb'
   };
 
   // initialize for conversation with store
   ns.init = (content) => {
 
     // pick the instance
-    ns.handle.setEnv(ns.settings.instance);
-
+    //ns.handle.setEnv(ns.settings.instance);
+    
     // set the keys
     ns.handle.setKeys({
       id: content.id,
@@ -213,4 +223,3 @@ var Exchange = (function(ns) {
 
   return ns;
 })({});
-
